@@ -9,4 +9,9 @@ int main(){
 	cout << "Enter the size of the bloom filter and the number of hash functions" << endl;
 	cin >> size >> nhashes;
 	bloomfilter bf = bloomfilter(size,nhashes);
+
+	string s;
+	while(cin >> s && s != ".") bf.add(s);
+
+	bf.output();
 }

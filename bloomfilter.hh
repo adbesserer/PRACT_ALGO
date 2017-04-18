@@ -12,33 +12,26 @@ class bloomfilter {
 	private:
 		int n_hashes; //numero de funciones de hash que utiliza el filtro
 		int size;   //tamaño del filtro de bloom
+		int falsePositives; //numero de falsos positivos
 		vector<bool> bf;
+
+		int pow(int x, int y){
+			if(y == 0) return 1;
+			else return x*pow(x, y-1);
+		}
+
+		int string2num(string key){
+			int res = 0;
+			for(int i = 0; i<key.size(); ++i) res += atoi(&(key[i]))*pow(10, i);
+			return res;
+		}
 		
 	public:
-		bloomfilter(int size, int n_hashes){  //creadora
-			if(size>0){
-				this->size=size;
-				bf = vector<bool>(size,false);
-			}
-			else{
-				cerr <<  "the size must be a positive integer" << endl;
-				exit(1);
-			 }
-			if(n_hashes>0)
-				this->n_hashes=n_hashes;
-			else{
-				cerr << "the number of hashes must be positive" << endl;		
-				exit(1);
-			}
-		}
+		bloomfilter(int size, int n_hashes);
+
+		void output();
 		
-		void add(string key){
-			//aqui ha de pasar todos los hashes
-			int m=size;
-			for(int i = 0; i!= n_hashes;++i){
-				bf[string2num(key)%m]=true;
-			}
-		}
+		void add(string key);
 };
 
 #endif

@@ -1,2 +1,2 @@
 # PRACT_ALGO
-clrs thicc af boi
+Las primeras semanas, como que no hay que hacer nada, no?

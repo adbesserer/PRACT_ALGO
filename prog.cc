@@ -11,7 +11,12 @@ int main(){
 	bloomfilter bf = bloomfilter(size,nhashes);
 
 	string s;
-	while(cin >> s && s != ".") bf.add(s);
+	cout << "Enter the number of keys to hash." << endl;
+	int nkeys; cin >> nkeys;
+	for(int i=0; i<nkeys; ++i){
+		cin >> s;
+		bf.add(s);
+	}
 
 	bf.output();
 }

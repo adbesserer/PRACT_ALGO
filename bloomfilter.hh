@@ -20,9 +20,9 @@ class bloomfilter {
 			else return x*pow(x, y-1);
 		}
 
-		int string2num(string key){
-			int res = 0;
-			for(int i = 0; i<key.size(); ++i) res += atoi(&(key[i]))*pow(10, i);
+		float stringToNum(string key){
+			float res = 0.0;
+			for(int i = 0; i<key.size(); ++i) res += atof(&(key[i]))*(float)pow(10, i);
 			return res;
 		}
 		

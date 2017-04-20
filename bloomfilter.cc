@@ -1,4 +1,5 @@
 #include "bloomfilter.hh"
+#include <math.h>
 
 bloomfilter::bloomfilter(int size, int n_hashes){
 	if(size>0){
@@ -22,14 +23,30 @@ void bloomfilter::output(){
 	cout << bf[0];
 	for(int i=1; i<bf.size(); ++i) cout << " " << bf[i];
 	cout << endl;
+	cout << "False Positives: " << this->falsePositives << endl;
 }
 
 void bloomfilter::add(string key){
 	//aqui ha de pasar todos los hashes
 	int m=size;
-	for(int i = 0; i!= n_hashes;++i){
-		int aux = string2num(key)%m;
-		if(bf[aux]) ++falsePositives;
-		else this->bf[aux]=true;
+	double integral;
+	int index = 0;
+	for(int i = 1; i <= n_hashes;++i){
+		float floatKey = stringToNum(key);
+		float valueOfA = (1.0/(((float)this->n_hashes)+1.0))*i;
+
+		//Son valores correctos tanto floatKey como valueOfA
+		//cout.precision(17);
+		//cout << fixed << floatKey << "           " << valueOfA << endl;
+		
+		float aux = modf(floatKey*valueOfA, &integral);
+
+		//Tambien correcto
+		//cout.precision(17);
+		//cout << fixed << floatKey*valueOfA << "        " << aux << endl;
+
+		index += (int)floor((float)this->size*aux);
 	}
+	if(bf[index%size]) ++falsePositives;
+	else this->bf[index%size]=true;
 }

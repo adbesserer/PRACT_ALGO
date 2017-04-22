@@ -2,6 +2,7 @@
 #include <math.h>
 #include <string>
 
+
 bloomfilter::bloomfilter(int size, int n_hashes){
 	if(size>0){
 		this->size=size;
@@ -19,43 +20,70 @@ bloomfilter::bloomfilter(int size, int n_hashes){
 	}
 	this->falsePositives = 0;
 }
-
 void bloomfilter::output(){
+	int sum = 0;
 	cout << bf[0];
-	for(int i=1; i<bf.size(); ++i) cout << " " << bf[i];
+	sum += bf[0];
+	for(int i=1; i<bf.size(); ++i) {
+		cout << " " << bf[i];
+		sum+=bf[i];
+	}
 	cout << endl;
 	cout << "False Positives: " << this->falsePositives << endl;
+	cout << "nª de unos xdlol: " << sum << endl;
 }
 
-void bloomfilter::add(string key){
-	//aqui ha de pasar todos los hashes
-	//std::string::size_type sz;
-	int index = 0;
-	double integralPart;
-	for(int i = 1; i <= n_hashes; ++i){
+void bloomfilter::add_mul(string key){
+	cout.precision(10);
+	for(long i = 1; i<=n_hashes; ++i){
+		mpf_t K;
+		mpf_init(K);
+		mpf_set_str (K, key.c_str(), 36);
+		
+		mpf_set_default_prec(128);
+		mpf_t A,fracPart,one,n,aux,hashval;
+		mpf_inits(A,fracPart,one,n,aux,hashval,NULL); //n = i en formato mpf
+		
+		mpf_set_ui(n,i);
+		mpf_set_si(A,(long)n_hashes);
+		mpf_set_ui(one,1);
 
-		double doubleKey = keyToDouble(key);
-		double valueOfA = (1.0/(n_hashes+1.0))*i;
-		double fractionalPart = modf(doubleKey*valueOfA, &integralPart);
-		long value = fractionalPart*pow(2, 32);
+		mpf_add(A,A,one);//A = A+1
+		mpf_div(A,one,A); //A = 1/A
+		mpf_mul(A,A,n); //A = A*i
+		cout << "A: " << mpf_get_d(A)<<endl;
+		mpf_mul(aux,K,A); // aux = K*A
+		mpf_set(fracPart,aux); // fracPart = aux
+		mpf_floor(aux,aux); // aux = floor(aux)
+		cout << "floor: " << mpf_get_d(aux);
+		mpf_sub(fracPart, fracPart, aux); //fracpart = parte fraccional de K*A
 
-		cout << fractionalPart == 0.0 << endl;
-		while(1);
+		cout << "integral: " << mpf_get_d(aux)<< endl;
+		cout << "fract: " << mpf_get_d(fracPart)<< endl;
 
-		cout.precision(40);
-		cout << fixed << "FP: " << fractionalPart << endl
-		<< "doublekey: " << doubleKey << endl 
-		<< "valueofa: " << valueOfA << endl
-		<< "ip: " << integralPart << endl
-		<< "MULT: " << (double)(doubleKey*valueOfA) << endl;
+		mpf_set_ui(aux,pow(i,9));
+		mpf_mul(hashval,fracPart, aux); // hashval= fracpart * 2^32
+		mpf_floor(hashval,hashval);
 
-		while(1);
-		//Tambien correcto
-		//cout.precision(17);
-		//cout << fixed << floatKey*valueOfA << "        " << aux << endl;
+		mpz_t result;
+		mpz_init(result);
+		mpz_set_f(result,hashval);
+		mpz_mod_ui(result,result,(long)size);
 
-		//index += (int)floor((float)this->size*aux);
+		unsigned long casilla = mpz_get_ui(result);
+
+		cout << "result: " << casilla << endl;
+
+		if(bf[casilla])++falsePositives;
+		bf[casilla]=true;
+
+		mpf_clear(aux);
+		mpf_clear(A);
+		mpf_clear(n);
+		mpf_clear(one);
+		mpf_clear(K);
+		mpf_clear(hashval);
+		mpf_clear(fracPart);
 	}
-	if(bf[index%size]) ++falsePositives;
-	else this->bf[index%size]=true;
+
 }

@@ -1,6 +1,8 @@
 #include <iostream>
 #include <vector>
 #include "bloomfilter.hh"
+#include <gmp.h>
+#include <gmpxx.h>
 using namespace std;
 
 
@@ -10,13 +12,12 @@ int main(){
 	cin >> size >> nhashes;
 	bloomfilter bf = bloomfilter(size,nhashes);
 
-	string s;
 	cout << "Enter the number of keys to hash." << endl;
 	int nkeys; cin >> nkeys;
 	for(int i=0; i <nkeys; ++i){
+		string s;
 		cin >> s;
-
-		bf.add(s);
+		bf.add_mul(s);
 	}
 
 	bf.output();

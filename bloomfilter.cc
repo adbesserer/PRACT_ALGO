@@ -1,5 +1,6 @@
 #include "bloomfilter.hh"
 #include <math.h>
+#include <string>
 
 bloomfilter::bloomfilter(int size, int n_hashes){
 	if(size>0){
@@ -28,24 +29,32 @@ void bloomfilter::output(){
 
 void bloomfilter::add(string key){
 	//aqui ha de pasar todos los hashes
-	int m=size;
-	double integral;
+	//std::string::size_type sz;
 	int index = 0;
-	for(int i = 1; i <= n_hashes;++i){
-		float floatKey = stringToNum(key);
-		float valueOfA = (1.0/(((float)this->n_hashes)+1.0))*i;
+	double integralPart;
+	for(int i = 1; i <= n_hashes; ++i){
 
-		//Son valores correctos tanto floatKey como valueOfA
-		//cout.precision(17);
-		//cout << fixed << floatKey << "           " << valueOfA << endl;
-		
-		float aux = modf(floatKey*valueOfA, &integral);
+		double doubleKey = keyToDouble(key);
+		double valueOfA = (1.0/(n_hashes+1.0))*i;
+		double fractionalPart = modf(doubleKey*valueOfA, &integralPart);
+		long value = fractionalPart*pow(2, 32);
 
+		cout << fractionalPart == 0.0 << endl;
+		while(1);
+
+		cout.precision(40);
+		cout << fixed << "FP: " << fractionalPart << endl
+		<< "doublekey: " << doubleKey << endl 
+		<< "valueofa: " << valueOfA << endl
+		<< "ip: " << integralPart << endl
+		<< "MULT: " << (double)(doubleKey*valueOfA) << endl;
+
+		while(1);
 		//Tambien correcto
 		//cout.precision(17);
 		//cout << fixed << floatKey*valueOfA << "        " << aux << endl;
 
-		index += (int)floor((float)this->size*aux);
+		//index += (int)floor((float)this->size*aux);
 	}
 	if(bf[index%size]) ++falsePositives;
 	else this->bf[index%size]=true;

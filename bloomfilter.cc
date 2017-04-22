@@ -20,6 +20,7 @@ bloomfilter::bloomfilter(int size, int n_hashes){
 	}
 	this->falsePositives = 0;
 }
+
 void bloomfilter::output(){
 	int sum = 0;
 	cout << bf[0];
@@ -86,4 +87,34 @@ void bloomfilter::add_mul(string key){
 		mpf_clear(fracPart);
 	}
 
+}
+
+bool isPrime(int n){
+	for(int i = 2; i<=sqrt(n); ++i) if(!(n%i)) return false;
+	return true;
+}
+
+vector<int> takeNprimes(int n){
+	int index = 0;
+	int i = 2;
+	vector<int> v(n);
+	while(index != n){
+		if(isPrime(i)){
+			v[index] = i;
+			++index;
+		}
+		++i;
+	}
+	return v;
+}
+
+void bloomfilter::add_div(string key){
+	double doubleKey = keyToDouble(key);
+	for(int i=0; i<n_hashes; ++i){
+		int prime = this->primes[i];
+		int index = (int)fmod(fmod(doubleKey, prime), bf.size());
+		//cout << "aqui!  " << index << "   " << prime << endl;
+		if(bf[index]) ++falsePositives;
+		else bf[index] = true;
+	}
 }

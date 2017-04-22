@@ -17,12 +17,15 @@ class bloomfilter {
 		int size;   //tamaño del filtro de bloom
 		int falsePositives; //numero de falsos positivos
 		vector<bool> bf;
+		vector<int> primes;
 
 	public:
 
 		bloomfilter(int size, int n_hashes);
 
 		void output();
+
+		void add_div(string key);
 		
 		void add_mul(string key);
 };

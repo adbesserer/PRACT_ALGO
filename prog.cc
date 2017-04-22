@@ -15,9 +15,8 @@ int main(){
 	cout << "Enter the number of keys to hash." << endl;
 	int nkeys; cin >> nkeys;
 	for(int i=0; i <nkeys; ++i){
-		string s;
-		cin >> s;
-		bf.add_mul(s);
+		string s; cin >> s;
+		bf.add_div(s);
 	}
 
 	bf.output();

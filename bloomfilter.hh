@@ -17,7 +17,7 @@ class bloomfilter {
 		int size;   //tamaño del filtro de bloom
 		int falsePositives; //numero de falsos positivos
 		vector<bool> bf;
-		vector<int> primes;
+		vector<long> primes;
 
 	public:
 

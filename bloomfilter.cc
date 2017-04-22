@@ -2,6 +2,7 @@
 #include <math.h>
 #include <string>
 
+vector<long> takeNprimes(int n);
 
 bloomfilter::bloomfilter(int size, int n_hashes){
 	if(size>0){
@@ -19,6 +20,7 @@ bloomfilter::bloomfilter(int size, int n_hashes){
 		exit(1);
 	}
 	this->falsePositives = 0;
+	primes = takeNprimes(n_hashes);
 }
 
 void bloomfilter::output(){
@@ -36,10 +38,11 @@ void bloomfilter::output(){
 
 void bloomfilter::add_mul(string key){
 	cout.precision(10);
-	for(long i = 1; i<=n_hashes; ++i){
-		mpf_t K;
+	mpf_t K;
 		mpf_init(K);
 		mpf_set_str (K, key.c_str(), 36);
+	for(long i = 1; i<=n_hashes; ++i){
+	
 		
 		mpf_set_default_prec(128);
 		mpf_t A,fracPart,one,n,aux,hashval;
@@ -89,15 +92,15 @@ void bloomfilter::add_mul(string key){
 
 }
 
-bool isPrime(int n){
-	for(int i = 2; i<=sqrt(n); ++i) if(!(n%i)) return false;
+bool isPrime(long n){
+	for(long i = 2; i<=sqrt(n); ++i) if(!(n%i)) return false;
 	return true;
 }
 
-vector<int> takeNprimes(int n){
-	int index = 0;
-	int i = 2;
-	vector<int> v(n);
+vector<long> takeNprimes(int n){
+	long index = 0;
+	long i =199;
+	vector<long> v(n);
 	while(index != n){
 		if(isPrime(i)){
 			v[index] = i;
@@ -109,12 +112,18 @@ vector<int> takeNprimes(int n){
 }
 
 void bloomfilter::add_div(string key){
-	double doubleKey = keyToDouble(key);
-	for(int i=0; i<n_hashes; ++i){
-		int prime = this->primes[i];
-		int index = (int)fmod(fmod(doubleKey, prime), bf.size());
+	mpz_t K;
+		mpz_init(K);
+		mpz_set_str (K, key.c_str(), 36);
+	for(long i=0; i<n_hashes; ++i){
+		mpz_t prime,result,index;
+		mpz_inits(result,index,NULL);
+	
+		mpz_mod_ui(result,K,primes[i]);
+		mpz_mod_ui(index,result,(long)size);
 		//cout << "aqui!  " << index << "   " << prime << endl;
-		if(bf[index]) ++falsePositives;
-		else bf[index] = true;
+		long u = mpz_get_ui(index);
+		if(bf[u]) ++falsePositives;
+		else bf[u] = true;
 	}
 }

@@ -1,7 +1,7 @@
 #include "bloomfilter.hh"
 #include <math.h>
 #include <string>
-
+#include <ctime>
 vector<long> takeNprimes(int n);
 
 bloomfilter::bloomfilter(int size, int n_hashes){
@@ -19,7 +19,6 @@ bloomfilter::bloomfilter(int size, int n_hashes){
 		cerr << "the number of hashes must be positive" << endl;		
 		exit(1);
 	}
-	this->falsePositives = 0;
 	primes = takeNprimes(n_hashes);
 }
 
@@ -32,11 +31,11 @@ void bloomfilter::output(){
 		sum+=bf[i];
 	}
 	cout << endl;
-	cout << "False Positives: " << this->falsePositives << endl;
-	cout << "nª de unos xdlol: " << sum << endl;
 }
-
+/*
 void bloomfilter::add_mul(string key){
+	clock_t begin = clock();
+
 	cout.precision(10);
 	mpf_t K;
 		mpf_init(K);
@@ -78,7 +77,6 @@ void bloomfilter::add_mul(string key){
 
 		cout << "result: " << casilla << endl;
 
-		if(bf[casilla])++falsePositives;
 		bf[casilla]=true;
 
 		mpf_clear(aux);
@@ -89,8 +87,11 @@ void bloomfilter::add_mul(string key){
 		mpf_clear(hashval);
 		mpf_clear(fracPart);
 	}
+	clock_t end = clock();
+  	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+  	cout << "time to add " << key << " = " << elapsed_secs << endl;
 
-}
+}*/
 
 bool isPrime(long n){
 	for(long i = 2; i<=sqrt(n); ++i) if(!(n%i)) return false;
@@ -112,6 +113,7 @@ vector<long> takeNprimes(int n){
 }
 
 void bloomfilter::add_div(string key){
+	clock_t begin = clock();
 	mpz_t K;
 		mpz_init(K);
 		mpz_set_str (K, key.c_str(), 36);
@@ -123,7 +125,17 @@ void bloomfilter::add_div(string key){
 		mpz_mod_ui(index,result,(long)size);
 		//cout << "aqui!  " << index << "   " << prime << endl;
 		long u = mpz_get_ui(index);
-		if(bf[u]) ++falsePositives;
 		else bf[u] = true;
 	}
+	clock_t end = clock();
+  	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+  	cout << "time to add " << key << " = " << elapsed_secs << endl;
+}
+
+bool find(string key){
+	clock_t begin = clock();
+	
+	clock_t end = clock();
+  	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+  	cout << "time to find " << key << " = " << elapsed_secs << endl;
 }

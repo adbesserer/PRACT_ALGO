@@ -32,7 +32,6 @@ int main(){
 	while(getline(keyFile,line)){
 		cout << line << endl;
 		if(line != "\n" and line[0] != '#'){
-			if(line.size() < 3) line+="FF"; 
 			elements.insert(line);
 			
 			bf.add_div(line);
@@ -42,7 +41,9 @@ int main(){
 	keyFile.close();
 	clock_t end = clock();
   	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+  	cout << "--------------------------------------------" << endl;
   	cout << "Total time to create bloom filter: " << elapsed_secs << endl;
+  	cout << "--------------------------------------------" << endl << endl;
 
   	ifstream testFile;
   	cout << "Enter the name of the file containing the tests" << endl;
@@ -54,7 +55,6 @@ int main(){
 	  	int fpCounter_sha = 0;
 	  	while(getline(testFile,line)){
 			if(line != "\n" and line[0] != '#'){
-				if(line.size() < 3) line+="FF"; 
 
 		  		if(bf.find(line)){
 		  			if(elements.find(line) == elements.end()){
@@ -81,7 +81,7 @@ int main(){
 		bfSHA.output();
 		cout << "-------------------------------------------------------------------" << endl <<
 				"False positives in the normie bloomfilter: " << fpCounter << endl <<
-				"False positives in the CS theory bloomfilter: " << fpCounter_sha << endl;
+				"False positives in the CS theory (sha256) bloomfilter: " << fpCounter_sha << endl;
 		cout << "\nTest finalized. Enter the name of another test file to run another test,"
 				<<"\nor press Ctrl + C to exit" << endl;
 	}

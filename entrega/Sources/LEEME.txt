@@ -1,0 +1,19 @@
+Ya se incluye el ejecutable, sólo hay que hacer:
+$./prog
+
+si no funcionase, ejecute lo siguiente:
+$make clean
+$make
+
+Nótese que utilizamos la libreria de precisión multiple GMP (https://gmplib.org/), como explicamos en la Documentación.
+
+El programa en sí es sencillo de utilizar, los pasos son los siguientes:
+1-Introduzca el tamaño que debe tener el Bloom Filter.
+2-Introduzca el número de funciones de hash a utilizar.
+3-Introduzca el nombre del fichero que contiene las claves, en nuestro caso "claus" (sin comillas).
+4-Introduzca el nombre del test que desea realizar (los ficheros test son las búsquedas a realizar).
+
+Para generar un nuevo test basta con escribir cualquier número de claves siguiendo el formato
+de los otros tests (una palabra por línea), o utilizar el programa rndm. Ya existe el ejecutable,
+pero se puede recompilar con $make rndm
+

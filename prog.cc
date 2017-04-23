@@ -42,7 +42,7 @@ int main(){
 	clock_t end = clock();
   	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
   	cout << "--------------------------------------------" << endl;
-  	cout << "Total time to create bloom filter: " << elapsed_secs << endl;
+  	cout << "Total time to fill bloom filter: " << elapsed_secs << endl;
   	cout << "--------------------------------------------" << endl << endl;
 
   	ifstream testFile;

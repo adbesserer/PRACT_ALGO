@@ -53,6 +53,8 @@ int main(){
   		testFile.open(fileName,ios::in);
   		int fpCounter = 0;
 	  	int fpCounter_sha = 0;
+	  	int not_founds = 0;
+	  	int not_founds_sha = 0;
 	  	while(getline(testFile,line)){
 			if(line != "\n" and line[0] != '#'){
 
@@ -63,7 +65,10 @@ int main(){
 					}
 		  			else cout << line <<" is in the bloom filter." << endl;
 		  		}
-		  		else cout << line <<"is not in the bloomfilter." << endl;
+		  		else {
+		  			cout << line <<"is not in the bloomfilter." << endl;
+		  			not_founds++;
+		  		}
 
 
 		  		if(bfSHA.find(sha256(line))){
@@ -73,7 +78,10 @@ int main(){
 		  			}
 		  			else cout << line <<" is in the SHA bloomfilter." << endl;
 		  		}
-		  		else cout << line <<" is not in the SHA bloomfilter." << endl;
+		  		else{
+		  		cout << line <<" is not in the SHA bloomfilter." << endl;
+		  		not_founds_sha++;
+		  		}
 		  	}
 	  	}
 
@@ -81,7 +89,10 @@ int main(){
 		bfSHA.output();
 		cout << "-------------------------------------------------------------------" << endl <<
 				"False positives in the normie bloomfilter: " << fpCounter << endl <<
-				"False positives in the CS theory (sha256) bloomfilter: " << fpCounter_sha << endl;
+				"False positives in the CS theory (sha256) bloomfilter: " << fpCounter_sha << endl<<endl;
+		cout << "Number of failed searches in the normie bloomfilter: " << not_founds << endl;		
+		cout << "Number of failed searches in the CS theory (sha256) bloomfilter: " << not_founds_sha << endl
+			 << "-------------------------------------------------------------------" << endl;		
 		cout << "\nTest finalized. Enter the name of another test file to run another test,"
 				<<"\nor press Ctrl + C to exit" << endl;
 	}

@@ -2,7 +2,7 @@
 #include <math.h>
 #include <string>
 #include <ctime>
-vector<long> takeNprimes(int n);
+vector<long> takeNprimes(int n, int bf_size);
 
 bloomfilter::bloomfilter(int size, int n_hashes){
 	if(size>0){
@@ -19,7 +19,7 @@ bloomfilter::bloomfilter(int size, int n_hashes){
 		cerr << "the number of hashes must be positive" << endl;		
 		exit(1);
 	}
-	primes = takeNprimes(n_hashes);
+	primes = takeNprimes(n_hashes,size);
 }
 
 void bloomfilter::output(){
@@ -98,9 +98,9 @@ bool isPrime(long n){
 	return true;
 }
 
-vector<long> takeNprimes(int n){
+vector<long> takeNprimes(int n, int bf_size){
 	long index = 0;
-	long i =199;
+	long i = bf_size;
 	vector<long> v(n);
 	while(index != n){
 		if(isPrime(i)){
@@ -115,8 +115,8 @@ vector<long> takeNprimes(int n){
 void bloomfilter::add_div(string key){
 	clock_t begin = clock();
 	mpz_t K;
-		mpz_init(K);
-		mpz_set_str (K, key.c_str(), 36);
+	mpz_init(K);
+	mpz_set_str (K, key.c_str(), 36);
 	for(long i=0; i<n_hashes; ++i){
 		mpz_t prime,result,index;
 		mpz_inits(result,index,NULL);
@@ -129,7 +129,7 @@ void bloomfilter::add_div(string key){
 	}
 	clock_t end = clock();
   	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-  	cout << "time to add " << key << " = " << elapsed_secs << endl;
+  	cout << "time to add key = " << elapsed_secs << endl;
 }
 
 bool bloomfilter::find(string key){
@@ -152,7 +152,7 @@ bool bloomfilter::find(string key){
 
 	clock_t end = clock();
   	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-  	cout << "time to find " << key << " = " << elapsed_secs << endl;
+  	cout << "time to find key = " << elapsed_secs << endl;
 
   	return true;
 

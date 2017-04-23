@@ -6,6 +6,7 @@
 #include <gmpxx.h>
 #include <ctime>
 #include <set>
+#include <fstream>
 
 using namespace std;
 
@@ -20,42 +21,68 @@ int main(){
 	bloomfilter bf = bloomfilter(size,nhashes);
 	bloomfilter bfSHA = bloomfilter(size,nhashes);
 
-	cout << "Enter the number of keys to hash." << endl;
-	int nkeys; cin >> nkeys;
-	clock_t begin = clock();
-	for(int i=0; i <nkeys; ++i){
-		string s; cin >> s;
-
-		if(s.size() < 3) s+="FF"; 
-		elements.insert(s);
-		
-		bf.add_div(s);
-		bfSHA.add_div(sha256(s));
+	cout << "Enter the name of the file containing the keys." << endl 
+			<< "(This file must be in the same directory as this program)" << endl;
+	int nkeys = 0;
+	ifstream keyFile;
+	string fileName,line;
+	cin >> fileName;
+	keyFile.open(fileName, ios::in);
+	clock_t begin = clock();	
+	while(getline(keyFile,line)){
+		cout << line << endl;
+		if(line != "\n" and line[0] != '#'){
+			if(line.size() < 3) line+="FF"; 
+			elements.insert(line);
+			
+			bf.add_div(line);
+			bfSHA.add_div(sha256(line));
+		}
 	}
+	keyFile.close();
 	clock_t end = clock();
   	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
-  	cout << "Total time: " << elapsed_secs << endl;
+  	cout << "Total time to create bloom filter: " << elapsed_secs << endl;
 
-  	cout << "Enter the number of keys to search." << endl;
-  	cin >> nkeys;
-  	for(int i=0; i < nkeys; ++i){
-  		string s; cin >> s;
-  		if(s.size() < 3) s+="FF";
+  	ifstream testFile;
+  	cout << "Enter the name of the file containing the tests" << endl;
+  	while(1){
+  		string fileName;
+  		cin >> fileName;
+  		testFile.open(fileName,ios::in);
+  		int fpCounter = 0;
+	  	int fpCounter_sha = 0;
+	  	while(getline(testFile,line)){
+			if(line != "\n" and line[0] != '#'){
+				if(line.size() < 3) line+="FF"; 
 
-  		if(bf.find(s)){
-  			if(elements.find(s) == elements.end()) cout << "FALSE POSITIVE" << endl;
-  			else cout << "It is in the bloomfilter." << endl;
-  		}
-  		else cout << "It is not in the bloomfilter." << endl;
+		  		if(bf.find(line)){
+		  			if(elements.find(line) == elements.end()){
+						cout << "FALSE POSITIVE" << endl;
+						++fpCounter;
+					}
+		  			else cout << line <<" is in the bloom filter." << endl;
+		  		}
+		  		else cout << line <<"is not in the bloomfilter." << endl;
 
 
-  		if(bfSHA.find(sha256(s))){
-  			if(elements.find(s) == elements.end()) cout << "FALSE POSITIVE" << endl;
-  			else cout << "It is in the SHA bloomfilter." << endl;
-  		}
-  		else cout << "It is not in the SHA bloomfilter." << endl;
-  	}
+		  		if(bfSHA.find(sha256(line))){
+		  			if(elements.find(line) == elements.end()) {
+		  				cout << "FALSE POSITIVE" << endl;
+		  				++fpCounter_sha;
+		  			}
+		  			else cout << line <<" is in the SHA bloomfilter." << endl;
+		  		}
+		  		else cout << line <<" is not in the SHA bloomfilter." << endl;
+		  	}
+	  	}
 
-	bf.output();
-	bfSHA.output();
+		bf.output();
+		bfSHA.output();
+		cout << "-------------------------------------------------------------------" << endl <<
+				"False positives in the normie bloomfilter: " << fpCounter << endl <<
+				"False positives in the CS theory bloomfilter: " << fpCounter_sha << endl;
+		cout << "\nTest finalized. Enter the name of another test file to run another test,"
+				<<"\nor press Ctrl + C to exit" << endl;
+	}
 }

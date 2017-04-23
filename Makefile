@@ -4,7 +4,6 @@ all: prog
 
 prog: prog.o bloomfilter.o sha256.o
 	g++ -lgmpxx -lgmp -std=c++11 -g -o prog prog.o bloomfilter.o sha256.o
-	rm *.o *.hh.gch
 
 prog.o: prog.cc
 	g++ -lgmpxx -lgmp -std=c++11 -g -c prog.cc
@@ -14,3 +13,6 @@ bloomfilter.o: bloomfilter.cc bloomfilter.hh
 
 sha256.o: sha256.cc sha256.h
 	g++ -std=c++11 -g -c sha256.cc sha256.h
+
+clean: 
+	rm *.o prog 

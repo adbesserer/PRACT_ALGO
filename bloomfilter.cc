@@ -123,19 +123,37 @@ void bloomfilter::add_div(string key){
 	
 		mpz_mod_ui(result,K,primes[i]);
 		mpz_mod_ui(index,result,(long)size);
-		//cout << "aqui!  " << index << "   " << prime << endl;
+		
 		long u = mpz_get_ui(index);
-		else bf[u] = true;
+		bf[u] = true;
 	}
 	clock_t end = clock();
   	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
   	cout << "time to add " << key << " = " << elapsed_secs << endl;
 }
 
-bool find(string key){
+bool bloomfilter::find(string key){
 	clock_t begin = clock();
 	
+	mpz_t K;
+	mpz_init(K);
+	mpz_set_str (K, key.c_str(), 36);
+
+	for(long i=0; i<n_hashes; ++i){
+		mpz_t prime,result,index;
+		mpz_inits(result,index,NULL);
+	
+		mpz_mod_ui(result,K,primes[i]);
+		mpz_mod_ui(index,result,(long)size);
+
+		long u = mpz_get_ui(index);
+		if(!bf[u]) return false;
+	}
+
 	clock_t end = clock();
   	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
   	cout << "time to find " << key << " = " << elapsed_secs << endl;
+
+  	return true;
+
 }

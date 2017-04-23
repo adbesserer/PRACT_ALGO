@@ -36,6 +36,26 @@ int main(){
   	double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
   	cout << "Total time: " << elapsed_secs << endl;
 
+  	cout << "Enter the number of keys to search." << endl;
+  	cin >> nkeys;
+  	for(int i=0; i < nkeys; ++i){
+  		string s; cin >> s;
+  		if(s.size() < 3) s+="FF";
+
+  		if(bf.find(s)){
+  			if(elements.find(s) == elements.end()) cout << "FALSE POSITIVE" << endl;
+  			else cout << "It is in the bloomfilter." << endl;
+  		}
+  		else cout << "It is not in the bloomfilter." << endl;
+
+
+  		if(bfSHA.find(sha256(s))){
+  			if(elements.find(s) == elements.end()) cout << "FALSE POSITIVE" << endl;
+  			else cout << "It is in the SHA bloomfilter." << endl;
+  		}
+  		else cout << "It is not in the SHA bloomfilter." << endl;
+  	}
+
 	bf.output();
 	bfSHA.output();
 }

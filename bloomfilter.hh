@@ -15,6 +15,7 @@ class bloomfilter {
 	private:
 		int n_hashes; //numero de funciones de hash que utiliza el filtro
 		int size;   //tamaño del filtro de bloom
+		int falsePositives; //numero de falsos positivos
 		vector<bool> bf;
 		vector<long> primes;
 
@@ -26,7 +27,7 @@ class bloomfilter {
 
 		void add_div(string key);
 		
-		//void add_mul(string key);    // da malos resultados
+		void add_mul(string key);
 
 		bool find(string key);
 };
